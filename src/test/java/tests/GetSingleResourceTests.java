@@ -10,13 +10,15 @@ import static org.hamcrest.core.Is.isA;
 
 public class GetSingleResourceTests {
 
+    String requestUri = "https://reqres.in/api/unknown/";
+
+
     @Test
     void successfulUnknownRequest2(){
-        String requestUri = "https://reqres.in/api/unknown/2";
         given()
             .log().uri()
         .when()
-            .get(requestUri)
+            .get(requestUri+"2")
         .then()
             .log().status()
             .log().body()
@@ -32,11 +34,10 @@ public class GetSingleResourceTests {
 
     @Test
     void successfulUnknownRequest3(){
-        String requestUri = "https://reqres.in/api/unknown/3";
         given()
             .log().uri()
         .when()
-            .get(requestUri)
+            .get(requestUri+3)
         .then()
             .log().status()
             .log().body()
@@ -52,7 +53,6 @@ public class GetSingleResourceTests {
 
     @Test
     void successfulUnknownRequestNoId(){
-        String requestUri = "https://reqres.in/api/unknown/";
         given()
             .log().uri()
         .when()
@@ -66,7 +66,7 @@ public class GetSingleResourceTests {
 
     @Test
     void unsuccessfulUnknownRequestPostInsteadOfGet (){
-        String requestUri = "https://reqres.in/api/unknown/3";
+        requestUri.concat("2");
         given()
             .log().uri()
         .when()
@@ -79,11 +79,10 @@ public class GetSingleResourceTests {
 
     @Test
     void successfulUnknownUnexpectedElement(){
-        String requestUri = "https://reqres.in/api/unknown/0";
         given()
             .log().uri()
         .when()
-            .get(requestUri)
+            .get(requestUri+0)
         .then()
             .log().status()
             .log().body()

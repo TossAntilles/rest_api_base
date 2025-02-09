@@ -8,9 +8,11 @@ import static org.hamcrest.core.Is.is;
 
 public class PostSuccessfulRegisterTests {
 
+    String requestUri = "https://reqres.in/api/register";
+
+
     @Test
     void successfulRegisterRequest(){
-        String requestUri = "https://reqres.in/api/register";
         String authData = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"pistol\"}";
         given()
             .log().uri()
@@ -28,7 +30,6 @@ public class PostSuccessfulRegisterTests {
 
     @Test
     void successfulRegisterRequestExternalData(){
-        String requestUri = "https://reqres.in/api/register";
         String authData = "{\"email\": \"janet.weaver@reqres.in\", \"password\": \"pistol\", \"hobby\": \"shooting\"}";
         given()
                 .log().uri()
@@ -46,7 +47,6 @@ public class PostSuccessfulRegisterTests {
 
     @Test
     void unsuccessfulRegisterUnknownUser(){
-        String requestUri = "https://reqres.in/api/register";
         String authData = "{\"email\": \"tosst@reqres.in\", \"password\": \"pistol\"}";
         given()
                 .log().uri()
@@ -63,7 +63,6 @@ public class PostSuccessfulRegisterTests {
 
     @Test
     void unsuccessfulRegisterRequestNullPassword(){
-        String requestUri = "https://reqres.in/api/register";
         String authData = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"\"}";
         given()
                 .log().uri()
@@ -80,7 +79,6 @@ public class PostSuccessfulRegisterTests {
 
     @Test
     void unsuccessfulRegisterRequestMissingPassword(){
-        String requestUri = "https://reqres.in/api/register";
         String authData = "{\"email\": \"eve.holt@reqres.in\"}";
         given()
                 .log().uri()
@@ -97,7 +95,6 @@ public class PostSuccessfulRegisterTests {
 
     @Test
     void unsuccessfulRegisterRequestMissingUsername(){
-        String requestUri = "https://reqres.in/api/register";
         String authData = "{\"password\": \"pistol\"}";
         given()
                 .log().uri()
@@ -114,7 +111,6 @@ public class PostSuccessfulRegisterTests {
 
     @Test
     void unsuccessfulRegisterRequestMissingData(){
-        String requestUri = "https://reqres.in/api/register";
         String authData = "{}";
         given()
                 .log().uri()
