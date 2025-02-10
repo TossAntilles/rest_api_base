@@ -1,6 +1,7 @@
 package tests;
 
 
+import io.qameta.allure.restassured.AllureRestAssured;
 import models.register.RegisterRequest;
 import models.register.RegisterRequestMoreFields;
 import models.register.SuccessfulRegisterResponse;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import io.restassured.http.ContentType;
 
+import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,9 +26,12 @@ public class PostSuccessfulRegisterTests {
             registerData.setPassword("pistol");
 
         SuccessfulRegisterResponse response =
-            step("Sending request", () ->
+            step("Sending request with correct email and password", () ->
                 given()
+                    .filter(withCustomTemplates())
                     .log().uri()
+                    .log().headers()
+                    .log().body()
                     .body(registerData)
                     .contentType(ContentType.JSON)
                 .when()
@@ -38,7 +43,7 @@ public class PostSuccessfulRegisterTests {
                     .extract().as(SuccessfulRegisterResponse.class)
         );
 
-        step("Verify response", () -> {
+        step("Verify correct response", () -> {
             assertEquals("4", response.getId());
             assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
         });
@@ -54,9 +59,12 @@ public class PostSuccessfulRegisterTests {
         registerData.setSignature("Bzzzzz");
 
         SuccessfulRegisterResponse response =
-            step("Sending request", () ->
+            step("Sending request with correct email and password and other fields", () ->
                 given()
+                    .filter(withCustomTemplates())
                     .log().uri()
+                    .log().headers()
+                    .log().body()
                     .body(registerData)
                     .contentType(ContentType.JSON)
                 .when()
@@ -68,7 +76,7 @@ public class PostSuccessfulRegisterTests {
                     .extract().as(SuccessfulRegisterResponse.class)
             );
 
-        step("Verify response", () -> {
+        step("Verify correct response", () -> {
             assertEquals("2", response.getId());
             assertEquals("QpwL5tke4Pnpja7X2", response.getToken());
         });
@@ -81,9 +89,12 @@ public class PostSuccessfulRegisterTests {
         registerData.setPassword("pistol");
 
         UnsuccessfulRegisterResponse response =
-            step("Sending request", () ->
+            step("Sending request with unexpected email", () ->
                 given()
+                    .filter(withCustomTemplates())
                     .log().uri()
+                    .log().headers()
+                    .log().body()
                     .body(registerData)
                     .contentType(ContentType.JSON)
                 .when()
@@ -95,7 +106,7 @@ public class PostSuccessfulRegisterTests {
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
-        step("Verify response", () -> {
+        step("Verify response, status code 400", () -> {
             assertEquals("Note: Only defined users succeed registration", response.getError());
         });
     }
@@ -107,9 +118,12 @@ public class PostSuccessfulRegisterTests {
         registerData.setPassword("");
 
         UnsuccessfulRegisterResponse response =
-            step("Sending request", () ->
+            step("Sending request with empty password", () ->
                 given()
+                    .filter(withCustomTemplates())
                     .log().uri()
+                    .log().headers()
+                    .log().body()
                     .body(registerData)
                     .contentType(ContentType.JSON)
                 .when()
@@ -121,7 +135,7 @@ public class PostSuccessfulRegisterTests {
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
-        step("Verify response", () -> {
+        step("Verify response, status code 400", () -> {
             assertEquals("Missing password", response.getError());
         });
     }
@@ -132,9 +146,12 @@ public class PostSuccessfulRegisterTests {
         registerData.setEmail("eve.holt@reqres.in");
 
         UnsuccessfulRegisterResponse response =
-            step("Sending request", () ->
+            step("Sending request without password", () ->
                 given()
+                    .filter(withCustomTemplates())
                     .log().uri()
+                    .log().headers()
+                    .log().body()
                     .body(registerData)
                     .contentType(ContentType.JSON)
                 .when()
@@ -146,7 +163,7 @@ public class PostSuccessfulRegisterTests {
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
-        step("Verify response", () -> {
+        step("Verify response, status code 400", () -> {
             assertEquals("Missing password", response.getError());
         });
     }
@@ -157,11 +174,14 @@ public class PostSuccessfulRegisterTests {
         registerData.setPassword("pistol");
 
         UnsuccessfulRegisterResponse response =
-            step("Sending request", () ->
+            step("Sending request without username", () ->
                 given()
+                    .filter(withCustomTemplates())
                     .log().uri()
-                    .body(registerData)
+                    .log().headers()
+                    .log().body()
                     .contentType(ContentType.JSON)
+                    .body(registerData)
                 .when()
                     .post(requestUri)
                 .then()
@@ -171,7 +191,7 @@ public class PostSuccessfulRegisterTests {
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
-        step("Verify response", () -> {
+        step("Verify response, status code 400", () -> {
             assertEquals("Missing email or username", response.getError());
         });
     }
@@ -181,9 +201,12 @@ public class PostSuccessfulRegisterTests {
         RegisterRequest registerData = new RegisterRequest();
 
         UnsuccessfulRegisterResponse response =
-            step("Sending request", () ->
+            step("Sending an empty request", () ->
                 given()
+                    .filter(withCustomTemplates())
                     .log().uri()
+                    .log().headers()
+                    .log().body()
                     .body(registerData)
                     .contentType(ContentType.JSON)
                 .when()
@@ -195,7 +218,7 @@ public class PostSuccessfulRegisterTests {
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
-        step("Verify response", () -> {
+        step("Verify response, status code 400", () -> {
             assertEquals("Missing email or username", response.getError());
         });
     }
