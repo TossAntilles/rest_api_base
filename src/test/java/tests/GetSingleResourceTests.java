@@ -1,38 +1,40 @@
 package tests;
 
-import io.restassured.http.ContentType;
+import io.qameta.allure.*;
 import models.resources.GetResourcesList;
 import models.resources.GetResourcesResponse;
 
 import models.resources.PostResourcesData;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
+import static specs.RegisterSpec.*;
 
 
 public class GetSingleResourceTests {
 
     String requestUri = "https://reqres.in/api/unknown/";
 
-
     @Test
-    void successfulUnknownRequest2(){
+    @Tag("Resource")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("GET запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/unknown/")
+    @DisplayName("Успешный запрос.")
+    void successfulUnknownRequest2Test(){
         GetResourcesResponse response =
             step("Sending valid request", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(resourcesRequestSpec)
                 .when()
                     .get(requestUri+"2")
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(200)
+                    .spec(response200Spec)
                     .extract().as(GetResourcesResponse.class)
             );
 
@@ -52,20 +54,21 @@ public class GetSingleResourceTests {
 
 
     @Test
-    void successfulUnknownRequest3(){
+    @Tag("Resource")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("GET запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/unknown/")
+    @DisplayName("Успешный запрос.")
+    void successfulUnknownRequest3Test(){
         GetResourcesResponse response =
             step("Sending valid request", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(resourcesRequestSpec)
                 .when()
                     .get(requestUri+3)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(200)
+                    .spec(response200Spec)
                     .extract().as(GetResourcesResponse.class)
             );
 
@@ -83,20 +86,21 @@ public class GetSingleResourceTests {
     }
 
     @Test
-    void successfulUnknownRequestNoId(){
+    @Tag("Resource")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("GET запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/unknown/")
+    @DisplayName("Запрос без параметра id.")
+    void successfulUnknownRequestNoIdTest(){
         GetResourcesList response =
             step("Sending valid request with no id", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(resourcesRequestSpec)
                 .when()
                     .get(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(200)
+                    .spec(response200Spec)
                     .extract().as(GetResourcesList.class)
             );
 
@@ -127,19 +131,21 @@ public class GetSingleResourceTests {
     }
 
     @Test
-    void successfulUnknownUnexpectedElement(){
+    @Tag("Resource")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("GET запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/unknown/")
+    @DisplayName("Запрос с некорректным id.")
+    void successfulUnknownUnexpectedElementTest(){
         GetResourcesResponse response =
             step("Sending request with incorrect id", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()                .when()
+                    .spec(resourcesRequestSpec)
+                .when()
                     .get(requestUri+0)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(404)
+                        .spec(response404Spec)
                     .extract().as(GetResourcesResponse.class)
             );
 
@@ -150,25 +156,23 @@ public class GetSingleResourceTests {
 
     }
 
-
-
     @Test
-    void unsuccessfulUnknownRequestPostInsteadOfGet (){
+    @Tag("Resource")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("GET запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/unknown/")
+    @DisplayName("POST звпрос вместо GET")
+    void unsuccessfulUnknownRequestPostInsteadOfGetTest (){
         requestUri.concat("1");
         PostResourcesData response =
             step("Sending POST request instead of GET", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
-                    .contentType(ContentType.JSON)
+                    .spec(registerRequestSpec)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(201)
+                    .spec(response201Spec)
                     .extract().as(PostResourcesData.class)
             );
 

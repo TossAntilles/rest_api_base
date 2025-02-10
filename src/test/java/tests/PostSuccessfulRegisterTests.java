@@ -1,26 +1,34 @@
 package tests;
 
-
-import io.qameta.allure.restassured.AllureRestAssured;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Owner;
+import io.qameta.allure.Story;
 import models.register.RegisterRequest;
 import models.register.RegisterRequestMoreFields;
 import models.register.SuccessfulRegisterResponse;
 import models.register.UnsuccessfulRegisterResponse;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import io.restassured.http.ContentType;
-
-import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static specs.RegisterSpec.*;
 
 public class PostSuccessfulRegisterTests {
 
     String requestUri = "https://reqres.in/api/register";
 
     @Test
-    void successfulRegisterRequest(){
+    @Tag("Register")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("POST запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/register")
+    @DisplayName("Запрос с корректным email и password.")
+    void successfulRegisterRequestTest(){
         RegisterRequest registerData = new RegisterRequest();
             registerData.setEmail("eve.holt@reqres.in");
             registerData.setPassword("pistol");
@@ -28,18 +36,12 @@ public class PostSuccessfulRegisterTests {
         SuccessfulRegisterResponse response =
             step("Sending request with correct email and password", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(registerRequestSpec)
                     .body(registerData)
-                    .contentType(ContentType.JSON)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(200)
+                    .spec(response200Spec)
                     .extract().as(SuccessfulRegisterResponse.class)
         );
 
@@ -51,7 +53,13 @@ public class PostSuccessfulRegisterTests {
     }
 
     @Test
-    void successfulRegisterRequestAdditionalData(){
+    @Tag("Register")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("POST запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/register")
+    @DisplayName("Запрос с корректным email и password  избыточными данными.")
+    void successfulRegisterRequestAdditionalDataTest(){
         RegisterRequestMoreFields registerData = new RegisterRequestMoreFields();
         registerData.setEmail("janet.weaver@reqres.in");
         registerData.setPassword("pistol");
@@ -61,17 +69,12 @@ public class PostSuccessfulRegisterTests {
         SuccessfulRegisterResponse response =
             step("Sending request with correct email and password and other fields", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(registerRequestSpec)
                     .body(registerData)
-                    .contentType(ContentType.JSON)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
+                    .spec(response200Spec)
                     .statusCode(200)
                     .extract().as(SuccessfulRegisterResponse.class)
             );
@@ -83,7 +86,13 @@ public class PostSuccessfulRegisterTests {
     }
 
     @Test
-    void unsuccessfulRegisterUnknownUser(){
+    @Tag("Register")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("POST запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/register")
+    @DisplayName("Запрос с некорректным email.")
+    void unsuccessfulRegisterUnknownUserTest(){
         RegisterRequest registerData = new RegisterRequest();
         registerData.setEmail("tosst@reqres.in");
         registerData.setPassword("pistol");
@@ -91,18 +100,12 @@ public class PostSuccessfulRegisterTests {
         UnsuccessfulRegisterResponse response =
             step("Sending request with unexpected email", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(registerRequestSpec)
                     .body(registerData)
-                    .contentType(ContentType.JSON)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(400)
+                    .spec(response400Spec)
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
@@ -112,7 +115,13 @@ public class PostSuccessfulRegisterTests {
     }
 
     @Test
-    void unsuccessfulRegisterRequestNullPassword(){
+    @Tag("Register")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("POST запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/register")
+    @DisplayName("Запрос с корректным email и пустым password.")
+    void unsuccessfulRegisterRequestNullPasswordTest(){
         RegisterRequest registerData = new RegisterRequest();
         registerData.setEmail("eve.holt@reqres.in");
         registerData.setPassword("");
@@ -120,18 +129,12 @@ public class PostSuccessfulRegisterTests {
         UnsuccessfulRegisterResponse response =
             step("Sending request with empty password", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(registerRequestSpec)
                     .body(registerData)
-                    .contentType(ContentType.JSON)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(400)
+                    .spec(response400Spec)
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
@@ -141,25 +144,25 @@ public class PostSuccessfulRegisterTests {
     }
 
     @Test
-    void unsuccessfulRegisterRequestMissingPassword(){
+    @Tag("Register")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("POST запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/register")
+    @DisplayName("Запрос с корректным email и отсутствующим password.")
+    void unsuccessfulRegisterRequestMissingPasswordTest(){
         RegisterRequest registerData = new RegisterRequest();
         registerData.setEmail("eve.holt@reqres.in");
 
         UnsuccessfulRegisterResponse response =
             step("Sending request without password", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(registerRequestSpec)
                     .body(registerData)
-                    .contentType(ContentType.JSON)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(400)
+                    .spec(response400Spec)
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
@@ -169,25 +172,25 @@ public class PostSuccessfulRegisterTests {
     }
 
     @Test
-    void unsuccessfulRegisterRequestMissingUsername() {
+    @Tag("Register")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("POST запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/register")
+    @DisplayName("Запрос без email.")
+    void unsuccessfulRegisterRequestMissingUsernameTest() {
         RegisterRequest registerData = new RegisterRequest();
         registerData.setPassword("pistol");
 
         UnsuccessfulRegisterResponse response =
             step("Sending request without username", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
-                    .contentType(ContentType.JSON)
+                    .spec(registerRequestSpec)
                     .body(registerData)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(400)
+                    .spec(response400Spec)
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
@@ -197,24 +200,24 @@ public class PostSuccessfulRegisterTests {
     }
 
     @Test
-    void unsuccessfulRegisterRequestMissingData(){
+    @Tag("Register")
+    @Feature("Автоматизация тестирования REST API")
+    @Story("POST запрос")
+    @Owner("Toss Antilles")
+    @Link("https://reqres.in/api/register")
+    @DisplayName("Пустой запрос без email и password.")
+    void unsuccessfulRegisterRequestMissingDataTest(){
         RegisterRequest registerData = new RegisterRequest();
 
         UnsuccessfulRegisterResponse response =
             step("Sending an empty request", () ->
                 given()
-                    .filter(withCustomTemplates())
-                    .log().uri()
-                    .log().headers()
-                    .log().body()
+                    .spec(registerRequestSpec)
                     .body(registerData)
-                    .contentType(ContentType.JSON)
                 .when()
                     .post(requestUri)
                 .then()
-                    .log().status()
-                    .log().body()
-                    .statusCode(400)
+                    .spec(response400Spec)
                     .extract().as(UnsuccessfulRegisterResponse.class)
             );
 
