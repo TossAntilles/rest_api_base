@@ -3,7 +3,7 @@ package models.resources;
 import lombok.Data;
 
 @Data
-public class GetResourcesResponseSupportModel {
+public class GetResourcesSupport {
 
         String url, text;
 

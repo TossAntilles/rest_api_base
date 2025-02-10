@@ -1,153 +1,203 @@
 package tests;
 
 
-import models.register.RegisterRequestModel;
-import models.register.SuccessfulRegisterResponseModel;
-import models.register.UnsuccessfulRegisterResponseModel;
+import models.register.RegisterRequest;
+import models.register.RegisterRequestMoreFields;
+import models.register.SuccessfulRegisterResponse;
+import models.register.UnsuccessfulRegisterResponse;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.http.ContentType;
+
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostSuccessfulRegisterTests {
 
     String requestUri = "https://reqres.in/api/register";
 
-
     @Test
     void successfulRegisterRequest(){
-        RegisterRequestModel registerData = new RegisterRequestModel();
+        RegisterRequest registerData = new RegisterRequest();
             registerData.setEmail("eve.holt@reqres.in");
             registerData.setPassword("pistol");
 
-        SuccessfulRegisterResponseModel response =
-        given()
-            .log().uri()
-            .body(registerData)
-            .contentType(ContentType.JSON)
-        .when()
-            .post(requestUri)
-        .then()
-            .log().status()
-            .log().body()
-            .statusCode(200)
-            .extract().as(SuccessfulRegisterResponseModel.class);
+        SuccessfulRegisterResponse response =
+            step("Sending request", () ->
+                given()
+                    .log().uri()
+                    .body(registerData)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .post(requestUri)
+                .then()
+                    .log().status()
+                    .log().body()
+                    .statusCode(200)
+                    .extract().as(SuccessfulRegisterResponse.class)
+        );
+
+        step("Verify response", () -> {
+            assertEquals("4", response.getId());
+            assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
+        });
+
     }
 
     @Test
-    void successfulRegisterRequestExternalData(){
-        RegisterRequestModel registerData = new RegisterRequestModel();
+    void successfulRegisterRequestAdditionalData(){
+        RegisterRequestMoreFields registerData = new RegisterRequestMoreFields();
         registerData.setEmail("janet.weaver@reqres.in");
         registerData.setPassword("pistol");
+        registerData.setUserpic("Major.jpg");
+        registerData.setSignature("Bzzzzz");
 
-        SuccessfulRegisterResponseModel response =
-            given()
-                .log().uri()
-                .body(registerData)
-                .contentType(ContentType.JSON)
-            .when()
-                .post(requestUri)
-            .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .extract().as(SuccessfulRegisterResponseModel.class);
+        SuccessfulRegisterResponse response =
+            step("Sending request", () ->
+                given()
+                    .log().uri()
+                    .body(registerData)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .post(requestUri)
+                .then()
+                    .log().status()
+                    .log().body()
+                    .statusCode(200)
+                    .extract().as(SuccessfulRegisterResponse.class)
+            );
+
+        step("Verify response", () -> {
+            assertEquals("2", response.getId());
+            assertEquals("QpwL5tke4Pnpja7X2", response.getToken());
+        });
     }
 
     @Test
     void unsuccessfulRegisterUnknownUser(){
-        RegisterRequestModel registerData = new RegisterRequestModel();
+        RegisterRequest registerData = new RegisterRequest();
         registerData.setEmail("tosst@reqres.in");
         registerData.setPassword("pistol");
 
-        UnsuccessfulRegisterResponseModel response =
-            given()
-                .log().uri()
-                .body(registerData)
-                .contentType(ContentType.JSON)
-            .when()
-                .post(requestUri)
-            .then()
-                .log().status()
-                .log().body()
-                .statusCode(400)
-                .extract().as(UnsuccessfulRegisterResponseModel.class);
+        UnsuccessfulRegisterResponse response =
+            step("Sending request", () ->
+                given()
+                    .log().uri()
+                    .body(registerData)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .post(requestUri)
+                .then()
+                    .log().status()
+                    .log().body()
+                    .statusCode(400)
+                    .extract().as(UnsuccessfulRegisterResponse.class)
+            );
+
+        step("Verify response", () -> {
+            assertEquals("Note: Only defined users succeed registration", response.getError());
+        });
     }
 
     @Test
     void unsuccessfulRegisterRequestNullPassword(){
-        RegisterRequestModel registerData = new RegisterRequestModel();
+        RegisterRequest registerData = new RegisterRequest();
         registerData.setEmail("eve.holt@reqres.in");
         registerData.setPassword("");
 
-        UnsuccessfulRegisterResponseModel response =
-            given()
-                .log().uri()
-                .body(registerData)
-                .contentType(ContentType.JSON)
-            .when()
-                .post(requestUri)
-            .then()
-                .log().status()
-                .log().body()
-                .statusCode(400)
-                .extract().as(UnsuccessfulRegisterResponseModel.class);
+        UnsuccessfulRegisterResponse response =
+            step("Sending request", () ->
+                given()
+                    .log().uri()
+                    .body(registerData)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .post(requestUri)
+                .then()
+                    .log().status()
+                    .log().body()
+                    .statusCode(400)
+                    .extract().as(UnsuccessfulRegisterResponse.class)
+            );
+
+        step("Verify response", () -> {
+            assertEquals("Missing password", response.getError());
+        });
     }
 
     @Test
     void unsuccessfulRegisterRequestMissingPassword(){
-        RegisterRequestModel registerData = new RegisterRequestModel();
+        RegisterRequest registerData = new RegisterRequest();
         registerData.setEmail("eve.holt@reqres.in");
 
-        UnsuccessfulRegisterResponseModel response =
-            given()
-                .log().uri()
-                .body(registerData)
-                .contentType(ContentType.JSON)
-            .when()
-                .post(requestUri)
-            .then()
-                .log().status()
-                .log().body()
-                .statusCode(400)
-                .extract().as(UnsuccessfulRegisterResponseModel.class);
+        UnsuccessfulRegisterResponse response =
+            step("Sending request", () ->
+                given()
+                    .log().uri()
+                    .body(registerData)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .post(requestUri)
+                .then()
+                    .log().status()
+                    .log().body()
+                    .statusCode(400)
+                    .extract().as(UnsuccessfulRegisterResponse.class)
+            );
+
+        step("Verify response", () -> {
+            assertEquals("Missing password", response.getError());
+        });
     }
 
     @Test
     void unsuccessfulRegisterRequestMissingUsername() {
-        RegisterRequestModel registerData = new RegisterRequestModel();
+        RegisterRequest registerData = new RegisterRequest();
         registerData.setPassword("pistol");
 
-        UnsuccessfulRegisterResponseModel response =
-            given()
-                .log().uri()
-                .body(registerData)
-                .contentType(ContentType.JSON)
-            .when()
-                .post(requestUri)
-            .then()
-                .log().status()
-                .log().body()
-                .statusCode(400)
-                .extract().as(UnsuccessfulRegisterResponseModel.class);
+        UnsuccessfulRegisterResponse response =
+            step("Sending request", () ->
+                given()
+                    .log().uri()
+                    .body(registerData)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .post(requestUri)
+                .then()
+                    .log().status()
+                    .log().body()
+                    .statusCode(400)
+                    .extract().as(UnsuccessfulRegisterResponse.class)
+            );
+
+        step("Verify response", () -> {
+            assertEquals("Missing email or username", response.getError());
+        });
     }
 
     @Test
     void unsuccessfulRegisterRequestMissingData(){
-        RegisterRequestModel registerData = new RegisterRequestModel();
+        RegisterRequest registerData = new RegisterRequest();
 
-        UnsuccessfulRegisterResponseModel response =
-            given()
-                .log().uri()
-                .body(registerData)
-                .contentType(ContentType.JSON)
-            .when()
-                .post(requestUri)
-            .then()
-                .log().status()
-                .log().body()
-                .statusCode(400)
-                .extract().as(UnsuccessfulRegisterResponseModel.class);
+        UnsuccessfulRegisterResponse response =
+            step("Sending request", () ->
+                given()
+                    .log().uri()
+                    .body(registerData)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .post(requestUri)
+                .then()
+                    .log().status()
+                    .log().body()
+                    .statusCode(400)
+                    .extract().as(UnsuccessfulRegisterResponse.class)
+            );
+
+        step("Verify response", () -> {
+            assertEquals("Missing email or username", response.getError());
+        });
     }
 
 }
