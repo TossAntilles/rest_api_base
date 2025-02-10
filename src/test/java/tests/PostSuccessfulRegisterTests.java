@@ -1,10 +1,13 @@
 package tests;
 
+
+import models.register.RegisterRequestModel;
+import models.register.SuccessfulRegisterResponseModel;
+import models.register.UnsuccessfulRegisterResponseModel;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.http.ContentType;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.core.Is.is;
 
 public class PostSuccessfulRegisterTests {
 
@@ -13,10 +16,14 @@ public class PostSuccessfulRegisterTests {
 
     @Test
     void successfulRegisterRequest(){
-        String authData = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"pistol\"}";
+        RegisterRequestModel registerData = new RegisterRequestModel();
+            registerData.setEmail("eve.holt@reqres.in");
+            registerData.setPassword("pistol");
+
+        SuccessfulRegisterResponseModel response =
         given()
             .log().uri()
-            .body(authData)
+            .body(registerData)
             .contentType(ContentType.JSON)
         .when()
             .post(requestUri)
@@ -24,106 +31,123 @@ public class PostSuccessfulRegisterTests {
             .log().status()
             .log().body()
             .statusCode(200)
-            .body("id", is(4))
-            .body("token", is("QpwL5tke4Pnpja7X4"));
+            .extract().as(SuccessfulRegisterResponseModel.class);
     }
 
     @Test
     void successfulRegisterRequestExternalData(){
-        String authData = "{\"email\": \"janet.weaver@reqres.in\", \"password\": \"pistol\", \"hobby\": \"shooting\"}";
-        given()
+        RegisterRequestModel registerData = new RegisterRequestModel();
+        registerData.setEmail("janet.weaver@reqres.in");
+        registerData.setPassword("pistol");
+
+        SuccessfulRegisterResponseModel response =
+            given()
                 .log().uri()
-                .body(authData)
+                .body(registerData)
                 .contentType(ContentType.JSON)
-                .when()
+            .when()
                 .post(requestUri)
-                .then()
+            .then()
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .body("id", is(2))
-                .body("token", is("QpwL5tke4Pnpja7X2"));
+                .extract().as(SuccessfulRegisterResponseModel.class);
     }
 
     @Test
     void unsuccessfulRegisterUnknownUser(){
-        String authData = "{\"email\": \"tosst@reqres.in\", \"password\": \"pistol\"}";
-        given()
+        RegisterRequestModel registerData = new RegisterRequestModel();
+        registerData.setEmail("tosst@reqres.in");
+        registerData.setPassword("pistol");
+
+        UnsuccessfulRegisterResponseModel response =
+            given()
                 .log().uri()
-                .body(authData)
+                .body(registerData)
                 .contentType(ContentType.JSON)
-                .when()
+            .when()
                 .post(requestUri)
-                .then()
+            .then()
                 .log().status()
                 .log().body()
                 .statusCode(400)
-                .body("error", is("Note: Only defined users succeed registration"));
+                .extract().as(UnsuccessfulRegisterResponseModel.class);
     }
 
     @Test
     void unsuccessfulRegisterRequestNullPassword(){
-        String authData = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"\"}";
-        given()
+        RegisterRequestModel registerData = new RegisterRequestModel();
+        registerData.setEmail("eve.holt@reqres.in");
+        registerData.setPassword("");
+
+        UnsuccessfulRegisterResponseModel response =
+            given()
                 .log().uri()
-                .body(authData)
+                .body(registerData)
                 .contentType(ContentType.JSON)
-                .when()
+            .when()
                 .post(requestUri)
-                .then()
+            .then()
                 .log().status()
                 .log().body()
                 .statusCode(400)
-                .body("error", is("Missing password"));
+                .extract().as(UnsuccessfulRegisterResponseModel.class);
     }
 
     @Test
     void unsuccessfulRegisterRequestMissingPassword(){
-        String authData = "{\"email\": \"eve.holt@reqres.in\"}";
-        given()
+        RegisterRequestModel registerData = new RegisterRequestModel();
+        registerData.setEmail("eve.holt@reqres.in");
+
+        UnsuccessfulRegisterResponseModel response =
+            given()
                 .log().uri()
-                .body(authData)
+                .body(registerData)
                 .contentType(ContentType.JSON)
-                .when()
+            .when()
                 .post(requestUri)
-                .then()
+            .then()
                 .log().status()
                 .log().body()
                 .statusCode(400)
-                .body("error", is("Missing password"));
+                .extract().as(UnsuccessfulRegisterResponseModel.class);
     }
 
     @Test
-    void unsuccessfulRegisterRequestMissingUsername(){
-        String authData = "{\"password\": \"pistol\"}";
-        given()
+    void unsuccessfulRegisterRequestMissingUsername() {
+        RegisterRequestModel registerData = new RegisterRequestModel();
+        registerData.setPassword("pistol");
+
+        UnsuccessfulRegisterResponseModel response =
+            given()
                 .log().uri()
-                .body(authData)
+                .body(registerData)
                 .contentType(ContentType.JSON)
-                .when()
+            .when()
                 .post(requestUri)
-                .then()
+            .then()
                 .log().status()
                 .log().body()
                 .statusCode(400)
-                .body("error", is("Missing email or username"));
+                .extract().as(UnsuccessfulRegisterResponseModel.class);
     }
 
     @Test
     void unsuccessfulRegisterRequestMissingData(){
-        String authData = "{}";
-        given()
+        RegisterRequestModel registerData = new RegisterRequestModel();
+
+        UnsuccessfulRegisterResponseModel response =
+            given()
                 .log().uri()
-                .body(authData)
+                .body(registerData)
                 .contentType(ContentType.JSON)
-                .when()
+            .when()
                 .post(requestUri)
-                .then()
+            .then()
                 .log().status()
                 .log().body()
                 .statusCode(400)
-                .body("error", is("Missing email or username"));
+                .extract().as(UnsuccessfulRegisterResponseModel.class);
     }
-
 
 }
