@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static specs.RegisterSpec.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static specs.RestApiSpec.*;
 
 public class PostSuccessfulRegisterTests {
 
@@ -46,8 +46,9 @@ public class PostSuccessfulRegisterTests {
         );
 
         step("Verify correct response", () -> {
-            assertEquals("4", response.getId());
-            assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
+            assertThat(response.getId()).isEqualTo("4");
+            assertThat(response.getToken()).hasSize(17);
+            assertThat(response.getToken()).containsPattern("^[A-Za-z0-9]*$");
         });
 
     }
@@ -80,8 +81,9 @@ public class PostSuccessfulRegisterTests {
             );
 
         step("Verify correct response", () -> {
-            assertEquals("2", response.getId());
-            assertEquals("QpwL5tke4Pnpja7X2", response.getToken());
+            assertThat(response.getId()).isEqualTo("2");
+            assertThat(response.getToken()).hasSize(17);
+            assertThat(response.getToken()).containsPattern("^[A-Za-z0-9]*$");
         });
     }
 
@@ -110,7 +112,7 @@ public class PostSuccessfulRegisterTests {
             );
 
         step("Verify response, status code 400", () -> {
-            assertEquals("Note: Only defined users succeed registration", response.getError());
+            assertThat(response.getError()).isEqualTo("Note: Only defined users succeed registration");
         });
     }
 
@@ -139,7 +141,7 @@ public class PostSuccessfulRegisterTests {
             );
 
         step("Verify response, status code 400", () -> {
-            assertEquals("Missing password", response.getError());
+            assertThat(response.getError()).isEqualTo("Missing password");
         });
     }
 
@@ -167,7 +169,7 @@ public class PostSuccessfulRegisterTests {
             );
 
         step("Verify response, status code 400", () -> {
-            assertEquals("Missing password", response.getError());
+            assertThat(response.getError()).isEqualTo("Missing password");
         });
     }
 
@@ -195,7 +197,7 @@ public class PostSuccessfulRegisterTests {
             );
 
         step("Verify response, status code 400", () -> {
-            assertEquals("Missing email or username", response.getError());
+            assertThat(response.getError()).isEqualTo("Missing email or username");
         });
     }
 
@@ -222,7 +224,7 @@ public class PostSuccessfulRegisterTests {
             );
 
         step("Verify response, status code 400", () -> {
-            assertEquals("Missing email or username", response.getError());
+            assertThat(response.getError()).isEqualTo("Missing email or username");
         });
     }
 

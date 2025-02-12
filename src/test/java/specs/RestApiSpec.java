@@ -7,46 +7,37 @@ import io.restassured.specification.ResponseSpecification;
 
 import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.restassured.RestAssured.with;
-import static io.restassured.filter.log.LogDetail.BODY;
-import static io.restassured.filter.log.LogDetail.STATUS;
+import static io.restassured.filter.log.LogDetail.*;
 
-public class RegisterSpec {
+public class RestApiSpec {
 
     public static RequestSpecification registerRequestSpec = with()
         .filter(withCustomTemplates())
-        .log().uri()
-        .log().headers()
-        .log().body()
+        .log().all()
         .contentType(ContentType.JSON);
 
     public static RequestSpecification resourcesRequestSpec = with()
         .filter(withCustomTemplates())
-        .log().uri()
-        .log().headers()
-        .log().body();
+        .log().all();
 
 
     public static ResponseSpecification response200Spec = new ResponseSpecBuilder()
         .expectStatusCode(200)
-        .log(STATUS)
-        .log(BODY)
+        .log(ALL)
         .build();
 
     public static ResponseSpecification response201Spec = new ResponseSpecBuilder()
             .expectStatusCode(201)
-            .log(STATUS)
-            .log(BODY)
+            .log(ALL)
             .build();
 
     public static ResponseSpecification response400Spec = new ResponseSpecBuilder()
             .expectStatusCode(400)
-            .log(STATUS)
-            .log(BODY)
+            .log(ALL)
             .build();
 
     public static ResponseSpecification response404Spec = new ResponseSpecBuilder()
             .expectStatusCode(404)
-            .log(STATUS)
-            .log(BODY)
+            .log(ALL)
             .build();
 }
